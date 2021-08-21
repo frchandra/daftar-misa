@@ -21,6 +21,7 @@ class CreateUmatsTable extends Migration
             $table->string('nama')->unique();
             $table->string('nama_babtis');
             $table->string('nik')->unique();
+            $table->string('kk');
             $table->date('tanggal_lahir');
             $table->enum('jenis_kelamin', ['laki-laki', 'perempuan']);
             $table->enum('vaksin', ['0', '1', '2', '>2']);
