@@ -5,6 +5,19 @@
 
     <h2>{{ $header }}</h2>
 
+    {{-- @if (session()->has('test'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('test') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div> 
+    @endif --}}
+
+    
+    
+    
+
+
+
     @if (session()->has('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{ session('success') }}
@@ -21,10 +34,6 @@
         </ul>
     </div>
     @endif
-
-
-
-
 
 
     <form action="/" method="POST">
@@ -53,11 +62,37 @@
             </div>
             @enderror --}}
         </div>
+
+        <select class="form-select" name="lingkungan" required>            
+            <option value="1">paroki</option>
+            <option value="2">non paroki</option>
+            <option value="3">soe</option>
+            <option value="4">andr</option>
+            <option value="5">mik</option>
+            <option value="6">raf</option>
+        </select>
         
 
         <button class="w-100 btn btn-lg btn-primary" type="submit">register</button>      
 
     </form>
+
+    <p>
+        <a class="btn btn-primary mt-4" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+          Link with href
+        </a>
+        <button class="btn btn-primary mt-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+          Button with data-bs-target
+        </button>
+    </p>
+    <div class="collapse" id="collapseExample">
+        <div class="card card-body">
+          Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
+        </div>
+    </div>
+
+
+
 
 
 
