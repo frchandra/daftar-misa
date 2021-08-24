@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="css/hierarchy-select.min.css"> --}}
     
     <title>Default</title>
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
   </head>
   <body>
 
@@ -47,6 +50,8 @@
         });
       });
     </script> --}}
+
+
 
 
 

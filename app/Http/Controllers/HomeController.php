@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Umat;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class HomeController extends Controller
 {
@@ -14,43 +16,40 @@ class HomeController extends Controller
             'header'=>'hello world...'
         ]);
     }
-
-
-    // Validator::make($data, [
-    //     'email' => [
-    //         'required',
-    //         Rule::exists('staff')->where(function ($query) {
-    //             return $query->where('account_id', 1);
-    //         }),
-    //     ],
-    // ]);
-
-    
+  
 
     public function cekNik(Request $request){
 
-        $nik = $request->input('nik');
-        $nama = $request->input('nama');  
-        $lingkungan = $request->input('lingkungan');
+        // $nik = $request->input('nik');
+        // $nama = $request->input('nama');  
+        // $lingkungan = $request->input('lingkungan');
 
-        
-
-
-        // $validator = Validator::make($request->toArray(),
+        // $cekNik = Validator::make($request->toArray(),
         //     [
-        //     'nama' => Rule::exists('umats')->where('nama', $nama)->where('nik', $nik),
-        //     'lingkungan' => Rule::exists('umats', 'lingkungan_id')->where('nama', $nama)->where('lingkungan_id',$lingkungan) 
-        //     ],
-        //     [
-        //         'nama' => 'nama atau NIK anda belum terdaftar atau salah lingkungan',
-        //         'lingkungan' => 'lingkungan tdk cocok'
+        //     'nama' => Rule::exists('umats')->where('nama', $nama)->where('nik', $nik) 
         //     ]
         // );
-        
 
-        // if ($validator->fails()) {
-        //     return redirect('/')->withErrors($validator);
+        // $cekLink = Validator::make($request->toArray(),
+        //     [
+        //     'lingkungan' => Rule::exists('umats', 'lingkungan_id')->where('nama', $nama)->where('lingkungan_id',$lingkungan) 
+        //     ]
+        // );
+
+        // if (!$cekNik->fails()) {
+        //     if($cekLink->fails()){
+        //         return redirect('/')->with('success', 'terdaftar, nama nik bener, link typo');
+        //     }
+        //     return redirect('/')->with('success', 'terdaftar, nama nik bener, link bener');
         // }
+
+        // if ($cekNik->fails()){
+        //     return redirect('/')->with('success', 'tidak terdaftar, nik salah');
+        // }
+
+        $nik = $request->nik;
+        $nama = $request->nama;
+        $lingkungan = $request->lingkungan; 
 
 
         $cekNik = Validator::make($request->toArray(),
@@ -65,42 +64,28 @@ class HomeController extends Controller
             ]
         );
 
-        // if ($cekNik->fails()&&$cekLink->fails()) {
-        //     return redirect('/')->with('success', 'cekNik fail, ceklink fail');
-        // }
-
-
 
         if (!$cekNik->fails()) {
             if($cekLink->fails()){
-                return redirect('/')->with('success', 'terdaftar, nama nik bener, link typo');
-            }
-            return redirect('/')->with('success', 'terdaftar, nama nik bener, link bener');
+               return response()->json(['success'=>'nama, nik benar, lingkungan salah']);
+            }      
+            $kk = Umat::select('kk')->where('nik', $nik)->first();
+            $keluarga = DB::table('umats')->select('nama', 'nik', 'kk')->where('kk', strval($kk['kk']) )->get();
+
+            return response()->json([
+                'success'=>$keluarga
+            ]);
+            // return response()->json([
+            //     'success'=>$keluarga
+            // ]);
         }
 
         if ($cekNik->fails()){
-            return redirect('/')->with('success', 'tidak terdaftar, nik salah');
+            return response()->json(['success'=>'tidak terdaftar']);
         }
 
-        // if ($cekLink->fails()) {
-        //     return redirect('/')->with('success', 'cekLink fail');
-        // }
-        
-        
+        // return response()->json(['success'=>[$nama, $nik, $lingkungan]]);
 
-        // if ($validator->fails()) {
-        //     return redirect('/')->withErrors($validator);
-        // }
-
-        
-
-        
-        // $validated = $request->validate([
-        //     'nama' => 'exists:umats,nama',
-        //     'nik' => 'exists:umats,nik'
-        // ]);
-
-        //return redirect('/')->with('success', 'validation success');
     }
 
 
