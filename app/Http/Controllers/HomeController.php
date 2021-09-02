@@ -54,7 +54,7 @@ class HomeController extends Controller
 
         $cekNik = Validator::make($request->toArray(),
             [
-            'nama' => Rule::exists('umats')->where('nama', $nama)->where('nik', $nik) 
+            'nama' => Rule::exists('umats', 'nama')->where('nama', $nama)->where('nik', $nik) 
             ]
         );
 
@@ -67,7 +67,7 @@ class HomeController extends Controller
 
         if (!$cekNik->fails()) {
             if($cekLink->fails()){
-               return response()->json(['success'=>'nama, nik benar, lingkungan salah']);
+               return response()->json(['success'=>'lingkungan error']);
             }      
             $kk = Umat::select('kk')->where('nik', $nik)->first();
             $keluarga = DB::table('umats')->select('nama', 'nik', 'kk')->where('kk', strval($kk['kk']) )->get();
@@ -75,9 +75,6 @@ class HomeController extends Controller
             return response()->json([
                 'success'=>$keluarga
             ]);
-            // return response()->json([
-            //     'success'=>$keluarga
-            // ]);
         }
 
         if ($cekNik->fails()){

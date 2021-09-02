@@ -5,69 +5,6 @@
 
     <h2>{{ $header }}</h2>
 
-    {{-- @if (session()->has('test'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ session('test') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div> 
-    @endif --}}
-
-    
-    
-    
-
-
-
-    {{-- @if (session()->has('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div> 
-    @endif
-
-    @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-    @endif
-
-
-    <form action="/" method="POST">
-
-        @csrf
-
-        <div class="form-floating">
-            <input type="text" name="nama" class="form-control @error('galat') is-invalid @enderror" id="nama" placeholder="nama" required>
-            <label for="nama">nama</label>     
-        </div>
-
-        <div class="form-floating">
-            <input type="text" name="nik" class="form-control @error('galat') is-invalid @enderror" id="nik" placeholder="nik" required>
-            <label for="nik">nik</label>
-        </div>
-
-        <select class="form-select" name="lingkungan" required>            
-            <option value="1">paroki</option>
-            <option value="2">non paroki</option>
-            <option value="3">soe</option>
-            <option value="4">andr</option>
-            <option value="5">mik</option>
-            <option value="6">raf</option>
-        </select>
-        
-
-        
-
-
-        <button class="w-100 btn btn-lg btn-primary" type="submit">register</button> 
-        
-
-    </form>      --}}
-
     <div class="container">
         <div class="alert alert-success" style="display:none"></div>
         <form id="myForm">
@@ -94,7 +31,7 @@
             </select>
             
 
-            <button class="w-100 btn btn-lg btn-primary" data-bs-toggle="collapse" href="#collapseExample" id="ajaxSubmit">register</button> 
+            <button class="w-100 btn btn-lg btn-primary" data-bs-toggle="collapse" href="#collapseExample" id="ajaxSubmit" aria-expanded="false" aria-controls="collapseExample">register</button> 
             
 
         </form>   
@@ -110,13 +47,7 @@
         </p>
         <div class="collapse panel-collapse" id="collapseExample">
             <table class="table" id="table">
-                <thead>
-                    <tr>
-                        <th >nama</th>
-                        <th >nik</th>
-                        <th >kk</th>
-                    </tr>
-                </thead>                
+
             </table>
         </div>
         
@@ -153,20 +84,23 @@
                         console.log(result.success);
                         $(".removable").remove();
 
-                        for (let i=0; i<3; i++) {
-                            console.log('aaa');
-                            let row = $('<tr><td class="removable">' + result.success[i].nama + '</td><td class="removable">' + result.success[i].nik  + 
-                            '</td><td class="removable">' + result.success[i].kk + '</td></tr>');
+                        if(result.success==='lingkungan error'){
+                            $(".head").remove();
+                            let row = $('<p class="removable">lingkungan typo</p>');
                             $('#table').append(row);
                         }
-                        
 
+                        else{
+                            $('#table').append("<thead class='removable'><tr><th >nama</th><th >nik</th><th >kk</th></tr></thead>");
 
-
-
-
-                       
+                            for (let i=0; i<result.success.length; i++) {                            
+                                let row = $('<tr><td class="removable">' + result.success[i].nama + '</td><td class="removable">' + result.success[i].nik  + 
+                                '</td><td class="removable">' + result.success[i].kk + '</td></tr>');
+                                $('#table').append(row);
+                            }
+                        }                  
                     }, 
+                    
                     error: function(xhr, status, error) {
                         const err = eval("(" + xhr.responseText + ")");
                         alert(err.Message);
@@ -175,31 +109,6 @@
             });
         });
     </script>
-
-    <script>
-        
-    // $(document).ready(function() {
-    //     $.getJSON('result.JSON', function(data) {
-    //         var output = '';
-    //         $.each(data.success, function(key, value) {
-    //             output += '<li>' + value.name + '</li>';
-    //         });
-    //         $('#example').html(output); // <ul id="example"></ul>
-    //     });
-    // });
-
-    </script>
-
-    
-
-
-
-
-
-
-
-
-
 
 
 
