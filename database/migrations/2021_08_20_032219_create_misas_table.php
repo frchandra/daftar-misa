@@ -17,6 +17,7 @@ class CreateMisasTable extends Migration
         Schema::create('misas', function (Blueprint $table) {
             $table->id('misa_id');
             $table->string('perayaan');
+            $table->date('tanggal');
             $table->time('jam');
             $table->timestamps();
             
