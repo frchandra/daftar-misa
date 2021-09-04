@@ -32,6 +32,9 @@
     @yield('container')
 
     @include('partials.footer')
+
+
+
  
 
 

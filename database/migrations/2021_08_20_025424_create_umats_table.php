@@ -18,7 +18,7 @@ class CreateUmatsTable extends Migration
         Schema::create('umats', function (Blueprint $table) {
             $table->id('umat_id');
             $table->foreignId('lingkungan_id');
-            $table->string('nama')->unique();
+            $table->string('nama')->unique();  //ralat: nama bolh sama
             $table->string('nama_babtis');
             $table->string('nik')->unique();
             $table->string('kk');

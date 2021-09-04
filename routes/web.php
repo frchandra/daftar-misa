@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CekMisa;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,5 +17,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index']);
 
-Route::post('/', [HomeController::class, 'validatePendaftaran']);
+Route::get('/misa-saya', [CekMisa::class, 'index']);
+
+Route::delete('/misa-saya', [CekMisa::class, 'delete']);
+
+Route::post('/validate', [HomeController::class, 'validatePendaftaran']);
+
+Route::post('/daftar', [HomeController::class, 'storePendaftaran']);
 
