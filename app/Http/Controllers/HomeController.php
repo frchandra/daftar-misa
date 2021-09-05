@@ -96,19 +96,27 @@ class HomeController extends Controller
 
         if (!$cekNik->fails()) {
             if($cekLing->fails()){
-               return response()->json(['success'=>'lingkungan error']);
+               return response()->json(['sukses'=>'lingkungan error']);
             }      
             $kk = $this->getKk($nik);
             $keluarga = $this->getUmats($kk);
             $misas = $this->getFilteredMisas($lingkungan);            
             return response()->json([
+                'content'=>view('modal.pendaftaran-lama')->render(),
+                'sukses'=>'berhasil',
                 'success'=>$keluarga,
                 'misa'=>$misas
             ]);
         }
 
         if ($cekNik->fails()){
-            return response()->json(['success'=>'tidak terdaftar']);
+            // return response()->json(['sukses'=>'tidak terdaftar']);
+            //kon ndaftar
+            $misas = $this->getFilteredMisas(2);
+            return response()->json([
+                'content'=>view('modal.pendaftaran-baru')->render(),
+                'misa'=>$misas
+            ]);
         }
     }
 
@@ -127,25 +135,93 @@ class HomeController extends Controller
                 return view('response',[
                     'response'=>'gagal',
                     'data'=>$array
-                ]);
-                
-
-                //$this->getUlm()->dd();
+                ]);            
             }  
         }
-        foreach($umatIds as $umatId){
-            UmatLingkunganMisa::create([
-                'umat_id'=>$umatId,
-                'lingkungan_misa_id'=>$lingkunganMisaId
-            ]);
-        }
+        //transaksi
+        DB::transaction(function () use ($umatIds, $lingkunganMisaId){
+            foreach($umatIds as $umatId){
+                UmatLingkunganMisa::create([
+                    'umat_id'=>$umatId,
+                    'lingkungan_misa_id'=>$lingkunganMisaId
+                ]);
+                DB::table('lingkungan_misas')
+                ->where('lingkungan_misa_id', $lingkunganMisaId)
+                ->update(['kuota' => DB::raw('kuota-1'), 'terdaftar' => DB::raw('terdaftar+1')]);
+            } 
+        });
+
+
 
         return view('response',[
             'response'=>'sukses'
-
         ]);
 
-        //return var_dump($store->all());
+        
 
     }
+
+    public function daftarBaru(Request $request){
+        $nama = $request->nama;
+        $namaBabtis = $request->namaBabtis;
+        $nik = $request->nik;
+        $kk = $request->kk;
+        $hp = $request->hp;
+        $tgl = $request->tgl;
+        $kl = $request->jenisKelamin;
+        $vaksin = $request->vaksin;
+        $lmId = $request->lingkungan_misa_id;
+
+        if($this->checkDuplicate($nama, $nik, $kk)->isEmpty()){
+            $id = DB::table('umats')->insertGetId([
+                'lingkungan_id' => '2',
+                'nama' => $nama,
+                'nama_babtis' => $namaBabtis,
+                'nik' => $nik,
+                'kk'=>$kk,
+                'tanggal_lahir' => $tgl,
+                'jenis_kelamin' => $kl,
+                'vaksin' => $vaksin,
+                'hp'=> $hp
+            ]);
+
+            //transaksi
+            DB::transaction(function () use ($id, $lmId){
+                UmatLingkunganMisa::create([
+                    'umat_id'=>$id,
+                    'lingkungan_misa_id'=>$lmId
+                ]);
+                DB::table('lingkungan_misas')
+                ->where('lingkungan_misa_id', $lmId)
+                ->update(['kuota' => DB::raw('kuota-1'), 'terdaftar' => DB::raw('terdaftar+1')]); 
+            });
+
+
+
+
+            return view('response',[
+                'response'=>'sukses',                
+            ]);            
+        }
+
+        else{
+            return view('response',[
+                'response'=>'error',                
+            ]);
+        }
+
+
+
+
+
+    }
+
+    public function checkDuplicate($nama, $nik, $kk){
+        return DB::table('umats')
+                    ->where('nama', $nama)
+                    ->where('nik', $nik)
+                    ->where('kk', $kk)
+                    ->get();
+    }
+
 }

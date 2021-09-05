@@ -14,43 +14,91 @@ class CekMisa extends Controller
                     ->join('lingkungan_misas', 'umat_lingkungan_misas.lingkungan_misa_id', '=', 'lingkungan_misas.lingkungan_misa_id')
                     ->join('lingkungans', 'lingkungan_misas.lingkungan_id', '=', 'lingkungans.lingkungan_id')
                     ->join('misas', 'lingkungan_misas.misa_id', '=', 'misas.misa_id')
-                    ->select('umats.nama', 'lingkungans.nama AS namaLingkungan', 'misas.perayaan', 'misas.tanggal', 'misas.jam', 'umat_lingkungan_misas.umat_lingkungan_misa_id')
+                    ->select('umats.nama', 'misas.perayaan', 'misas.tanggal', 'misas.jam', 'umats.umat_id', 'umat_lingkungan_misas.umat_lingkungan_misa_id', 'lingkungan_misas.lingkungan_misa_id')
                     ->where('umats.umat_id', $umatId)
                     ->get();
     }
+
+
 
     public function index(Request $request){
         // return 'ok';
         $nama = $request->nama;
         $nik = $request->nik;
         $lingkunganId = $request->lingkungan;
+
         $umatId = DB::table('umats')->select('umat_id')->where('nik', $nik)->where('lingkungan_id', $lingkunganId)->first();
-        $umatId = json_decode(json_encode($umatId), true);
-        $misa = $this->getUlm($umatId);
-        // $misa->dd();
-        if($misa->isEmpty()){
-            
+
+
+       
+
+        if($umatId==NULL){
+            $umatId = DB::table('umats')->select('umat_id')->where('nik', $nik)->first();
+            if($umatId==NULL){
+                return view('cekMisa',[
+                    'response'=>'gagal'                
+                ]);
+            }
             return view('cekMisa',[
-                'response'=>'gagal'                
+                'response'=>'lingkungan error'                
+            ]);
+
+        }
+
+        $umatId = json_decode(json_encode($umatId), true);        
+
+        $misa = $this->getUlm($umatId);
+        
+        if($misa->isEmpty()){            
+            return view('cekMisa',[
+                'response'=>'sukses',
+                'nama'=> $nama,
+                'data'=>'kosong'                
             ]);
         }
         $misa = json_decode(json_encode($misa), true);
         return view('cekMisa',[
             'response'=>'sukses',
             'nama'=> $nama,
-            'data'=>$misa
-            
+            'data'=>$misa 
         ]);
     }
 
     public function delete(Request $request){
         $ulmId = $request->ulmId;
+        $umatId = $request->umatId;
+        $nama = $request->nama;
+        $lmId = $request->lingkunganMisaId;
 
-        DB::table('umat_lingkungan_misas')->where('umat_lingkungan_misa_id', '=', $ulmId)->delete();
+        //transaksi
+        DB::transaction(function () use ($ulmId, $lmId) {
+            DB::table('umat_lingkungan_misas')->where('umat_lingkungan_misa_id', '=', $ulmId)->delete();
+            DB::table('lingkungan_misas')
+                ->where('lingkungan_misa_id', $lmId)
+                ->update(['kuota' => DB::raw('kuota+1'), 'terdaftar' => DB::raw('terdaftar-1')]);  
+        });
 
-        return response()->json([
-            'response'=>'sukses'
-        ]);
+
+        $misa = $this->getUlm($umatId);
+        if($misa->isEmpty()){
+            return view('cekMisa', [
+                'response'=> 'sukses',
+                'data'=>'kosong',
+                'nama'=>$nama
+            ]);
+        }
+        else{
+            $misa = json_decode(json_encode($misa), true);
+            return view('cekMisa', [
+                'response'=> 'sukses',
+                'data'=>$misa,
+                'nama'=>$nama
+            ]);
+        }
+
+
+
+
 
 
     }

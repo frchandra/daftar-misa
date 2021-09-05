@@ -21,7 +21,11 @@ Route::get('/misa-saya', [CekMisa::class, 'index']);
 
 Route::delete('/misa-saya', [CekMisa::class, 'delete']);
 
+Route::post('/misa-saya', [CekMisa::class, 'delete']);
+
 Route::post('/validate', [HomeController::class, 'validatePendaftaran']);
 
 Route::post('/daftar', [HomeController::class, 'storePendaftaran']);
+
+Route::post('/daftar-baru', [HomeController::class, 'daftarBaru']);
 

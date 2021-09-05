@@ -8,8 +8,8 @@
 
             @if ($response=='sukses')
             <div class="masthead-subheading">pendaftaran berhasil</div>
-                
-            @else
+
+            @elseif($response=='gagal')
             <div class="masthead-subheading">pendaftaran gagal</div>
             <p>sdr. {{ $data[0]['nama'] }} telah terfadtar di:</p>            
             <table class="table table-light table-striped">
@@ -32,7 +32,10 @@
                     @endforeach 
 
                 </tbody>
-            </table>                
+            </table>      
+            @else
+            <div class="masthead-subheading">pendaftaran error, nama sudah ada</div>
+              
             @endif
 
 
