@@ -18,7 +18,7 @@ class CreateUmatsTable extends Migration
         Schema::create('umats', function (Blueprint $table) {
             $table->id('umat_id');
             $table->foreignId('lingkungan_id');
-            $table->string('nama')->unique();  //ralat: nama bolh sama
+            $table->string('nama');  //ralat: nama bolh sama
             $table->string('nama_babtis');
             $table->string('nik')->unique();
             $table->string('kk');
@@ -26,7 +26,7 @@ class CreateUmatsTable extends Migration
             $table->enum('jenis_kelamin', ['laki-laki', 'perempuan']);
             $table->enum('vaksin', ['0', '1', '2', '>2']);
             $table->string('hp');
-            $table->timestamps();
+            // $table->timestamps();
 
         });
     }

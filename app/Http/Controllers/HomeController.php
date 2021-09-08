@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Umat;
+// use App\Models\Umat;
 use App\Models\UmatLingkunganMisa;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Validator;
 class HomeController extends Controller
 {
 
-    private function getMisas(){
+    private function getPresentMisas(){ //query
         $misas = DB::table('lingkungan_misas')
                 ->join('misas', 'lingkungan_misas.misa_id', '=', 'misas.misa_id')
                 ->join('lingkungans' ,'lingkungan_misas.lingkungan_id', '=', 'lingkungans.lingkungan_id')
@@ -23,8 +23,8 @@ class HomeController extends Controller
         return $misas;
     }
 
-    private function getFilteredMisas($lingkungan_id){
-        $misas = $this->getMisas()->groupBy('misa_id');
+    private function getFilteredMisas($lingkungan_id){ //helper, filter
+        $misas = $this->getPresentMisas()->groupBy('misa_id');
 
         $out = collect();
 
@@ -41,7 +41,7 @@ class HomeController extends Controller
         return $out;       
     }
 
-    public function checkUlm($umatId, $lingkunganMisaId){
+    public function checkUlm($umatId, $lingkunganMisaId){ //query
         return DB::table('umat_lingkungan_misas')
                 ->select('umat_id', 'lingkungan_misa_id')
                 ->where('umat_id', '=', $umatId)
@@ -49,7 +49,7 @@ class HomeController extends Controller
                 ->get();
     }
 
-    public function getUlm($umatId){
+    public function getUlm($umatId){ //query
         return DB::table('umat_lingkungan_misas')
                     ->join('umats', 'umat_lingkungan_misas.umat_id', '=', 'umats.umat_id')
                     ->join('lingkungan_misas', 'umat_lingkungan_misas.lingkungan_misa_id', '=', 'lingkungan_misas.lingkungan_misa_id')
@@ -60,24 +60,25 @@ class HomeController extends Controller
                     ->get();
     }
 
-    private function getKk($nik){
-        return Umat::select('kk')->where('nik', $nik)->first();
+    private function getKk($nik){ //query
+        // return Umat::select('kk')->where('nik', $nik)->first();
+        return DB::table('umats')->select('kk')->where('nik', $nik)->first();
     }
 
-    private function getUmats($kk){
+    private function getUmats($kk){ //query
         return DB::table('umats')
         ->join('lingkungans', 'umats.lingkungan_id', '=', 'lingkungans.lingkungan_id')
         ->select('umats.umat_id', 'umats.nama', 'umats.nik', 'umats.kk', 'lingkungans.nama AS namaLingkungan', 'lingkungans.lingkungan_id')->where('kk', strval($kk['kk']) )->get();
     }
 
-    public function index(){        
-        $misas = $this->getMisas();
+    public function index(){ //getpresentmisas   
+        $misas = $this->getPresentMisas();
         return view('home',[
             'misas'=>$misas
         ]);
     }
 
-    public function validatePendaftaran(Request $request){
+    public function validatePendaftaran(Request $request){ //logic, validation
         $nik = $request->nik;
         $nama = $request->nama;
         $lingkungan = $request->lingkungan;     
@@ -110,8 +111,6 @@ class HomeController extends Controller
         }
 
         if ($cekNik->fails()){
-            // return response()->json(['sukses'=>'tidak terdaftar']);
-            //kon ndaftar
             $misas = $this->getFilteredMisas(2);
             return response()->json([
                 'content'=>view('modal.pendaftaran-baru')->render(),
@@ -120,12 +119,14 @@ class HomeController extends Controller
         }
     }
 
-    public function storePendaftaran(Request $request){
+    public function storePendaftaran(Request $request){ //logic, query
         $umatIds = $request->input('umats');
         $lingkunganMisaId = $request->input('lingkungan_misa_id');  
 
         $store = collect();
         
+
+        //logic
         foreach($umatIds as $umatId){            
             if($this->checkUlm($umatId, $lingkunganMisaId)->isEmpty()){
                 $store->push(['umat_id'=>$umatId, 'lingkungan_misa_id'=>$lingkunganMisaId]);
@@ -138,7 +139,7 @@ class HomeController extends Controller
                 ]);            
             }  
         }
-        //transaksi
+        //transaksi query
         DB::transaction(function () use ($umatIds, $lingkunganMisaId){
             foreach($umatIds as $umatId){
                 UmatLingkunganMisa::create([
@@ -161,7 +162,7 @@ class HomeController extends Controller
 
     }
 
-    public function daftarBaru(Request $request){
+    public function daftarBaru(Request $request){ //query
         $nama = $request->nama;
         $namaBabtis = $request->namaBabtis;
         $nik = $request->nik;
@@ -216,7 +217,7 @@ class HomeController extends Controller
 
     }
 
-    public function checkDuplicate($nama, $nik, $kk){
+    public function checkDuplicate($nama, $nik, $kk){ //query
         return DB::table('umats')
                     ->where('nama', $nama)
                     ->where('nik', $nik)

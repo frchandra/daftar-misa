@@ -19,7 +19,8 @@ class CreateMisasTable extends Migration
             $table->string('perayaan');
             $table->date('tanggal');
             $table->time('jam');
-            $table->timestamps();
+            $table->enum('status_misa', ['past', 'present', 'future']);
+            // $table->timestamps();
             
         });
     }

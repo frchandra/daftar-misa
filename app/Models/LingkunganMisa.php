@@ -9,6 +9,8 @@ class LingkunganMisa extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $primaryKey = 'lingkungan_misa_id';
     protected $guarded = ['lingkungan_misa_id'];
 

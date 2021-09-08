@@ -9,6 +9,8 @@ class Umat extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $primaryKey = 'umat_id';
     protected $guarded = ['umat_id'];
 

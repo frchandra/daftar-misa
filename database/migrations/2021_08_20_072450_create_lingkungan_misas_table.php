@@ -20,7 +20,7 @@ class CreateLingkunganMisasTable extends Migration
             $table->foreignId('misa_id');
             $table->integer('kuota');
             $table->integer('terdaftar');
-            $table->timestamps();
+            // $table->timestamps();
         });
     }
 

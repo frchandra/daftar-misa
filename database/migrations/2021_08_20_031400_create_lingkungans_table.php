@@ -19,7 +19,7 @@ class CreateLingkungansTable extends Migration
             $table->id('lingkungan_id');
             $table->string('nama')->unique();
             $table->boolean('flag');
-            $table->timestamps();
+            // $table->timestamps();
         });
     }
 

@@ -19,8 +19,6 @@ class CekMisa extends Controller
                     ->get();
     }
 
-
-
     public function index(Request $request){
         // return 'ok';
         $nama = $request->nama;

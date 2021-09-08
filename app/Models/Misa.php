@@ -9,6 +9,8 @@ class Misa extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $primaryKey = 'misa_id';
     protected $guarded = ['misa_id'];
 

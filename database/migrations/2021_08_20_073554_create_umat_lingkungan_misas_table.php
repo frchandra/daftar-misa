@@ -18,7 +18,7 @@ class CreateUmatLingkunganMisasTable extends Migration
             $table->id('umat_lingkungan_misa_id');
             $table->foreignId('umat_id');
             $table->foreignId('lingkungan_misa_id');   
-            $table->timestamps();         
+            // $table->timestamps();         
         });
     }
 
