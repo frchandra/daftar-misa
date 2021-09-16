@@ -9,6 +9,9 @@
             @if ($response=='sukses')
             <div class="masthead-subheading">pendaftaran berhasil</div>
 
+            @elseif($response=='penuh')
+            <div class="masthead-subheading">kuota penuh</div>
+
             @elseif($response=='gagal')
             <div class="masthead-subheading">pendaftaran gagal</div>
             <p>sdr. {{ $data[0]['nama'] }} telah terfadtar di:</p>            

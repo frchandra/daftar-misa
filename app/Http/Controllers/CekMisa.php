@@ -5,53 +5,52 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+use App\Repositories\LingkunganMisaRepository;
+use App\Repositories\UlmRepository;
+use App\Repositories\UmatRepository;
+
+
 class CekMisa extends Controller
 {
 
-    public function getUlm($umatId){
-        return DB::table('umat_lingkungan_misas')
-                    ->join('umats', 'umat_lingkungan_misas.umat_id', '=', 'umats.umat_id')
-                    ->join('lingkungan_misas', 'umat_lingkungan_misas.lingkungan_misa_id', '=', 'lingkungan_misas.lingkungan_misa_id')
-                    ->join('lingkungans', 'lingkungan_misas.lingkungan_id', '=', 'lingkungans.lingkungan_id')
-                    ->join('misas', 'lingkungan_misas.misa_id', '=', 'misas.misa_id')
-                    ->select('umats.nama', 'misas.perayaan', 'misas.tanggal', 'misas.jam', 'umats.umat_id', 'umat_lingkungan_misas.umat_lingkungan_misa_id', 'lingkungan_misas.lingkungan_misa_id')
-                    ->where('umats.umat_id', $umatId)
-                    ->get();
+    private $umat;
+    private $lingkunganMisa;
+    private $ulm;
+
+    public function __construct(UmatRepository $umatRepository, UlmRepository $ulmRepository, LingkunganMisaRepository $lingkunganMisaRepository){
+        $this->umat = $umatRepository;
+        $this->lingkunganMisa = $lingkunganMisaRepository;
+        $this->ulm = $ulmRepository;
     }
 
     public function index(Request $request){
-        // return 'ok';
         $nama = $request->nama;
         $nik = $request->nik;
         $lingkunganId = $request->lingkungan;
 
-        $umatId = DB::table('umats')->select('umat_id')->where('nik', $nik)->where('lingkungan_id', $lingkunganId)->first();
-
-
-       
+        $umatId = $this->umat->getUmatIdByNIklId($nik, $lingkunganId);
 
         if($umatId==NULL){
-            $umatId = DB::table('umats')->select('umat_id')->where('nik', $nik)->first();
+            $umatId = $this->umat->getUmatIdByNik($nik);
             if($umatId==NULL){
                 return view('cekMisa',[
-                    'response'=>'gagal'                
+                    'response'=>'gagal'
                 ]);
             }
             return view('cekMisa',[
-                'response'=>'lingkungan error'                
+                'response'=>'lingkungan error'
             ]);
-
         }
 
-        $umatId = json_decode(json_encode($umatId), true);        
-
-        $misa = $this->getUlm($umatId);
+        $umatId = json_decode(json_encode($umatId), true);
         
-        if($misa->isEmpty()){            
+        $misa = $this->ulm->getUlm($umatId);
+        
+        if($misa->isEmpty()){
             return view('cekMisa',[
                 'response'=>'sukses',
                 'nama'=> $nama,
-                'data'=>'kosong'                
+                'data'=>'kosong'
             ]);
         }
         $misa = json_decode(json_encode($misa), true);
@@ -70,14 +69,12 @@ class CekMisa extends Controller
 
         //transaksi
         DB::transaction(function () use ($ulmId, $lmId) {
-            DB::table('umat_lingkungan_misas')->where('umat_lingkungan_misa_id', '=', $ulmId)->delete();
-            DB::table('lingkungan_misas')
-                ->where('lingkungan_misa_id', $lmId)
-                ->update(['kuota' => DB::raw('kuota+1'), 'terdaftar' => DB::raw('terdaftar-1')]);  
+            $this->ulm->delete($ulmId);
+            $this->lingkunganMisa->deleteUmat($lmId);
+
         });
 
-
-        $misa = $this->getUlm($umatId);
+        $misa = $this->ulm->getUlm($umatId);
         if($misa->isEmpty()){
             return view('cekMisa', [
                 'response'=> 'sukses',
@@ -93,11 +90,5 @@ class CekMisa extends Controller
                 'nama'=>$nama
             ]);
         }
-
-
-
-
-
-
     }
 }
