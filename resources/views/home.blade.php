@@ -10,34 +10,29 @@
             <div class="masthead-heading text-uppercase">It's Nice To Meet You</div>
 
             <table class="table table-light table-striped">
+
                 <thead>
                   <tr>
                     <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
+                    <th scope="col">perayaan</th>
+                    <th scope="col">tanggal</th>
+                    <th scope="col">jam</th>             
+                    <th scope="col">lingkungan</th>             
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Larry</td>
-                    <td>the Bird</td>
-                    <td>@twitter</td>
-                  </tr>
+                    @foreach($misas as $misa)                        
+                        <tr>        
+                            <td>{{$loop->iteration}}</td>            
+                            <td>{{ $misa['perayaan'] }}</td>
+                            <td>{{ $misa['tanggal'] }}</td>
+                            <td>{{ $misa['jam'] }}</td>
+                            <td>{{ $misa['nama'] }}</td>
+                        </tr>
+                    @endforeach 
+
                 </tbody>
+                
             </table>
 
             <a class="btn btn-primary btn-xl text-uppercase" href="#services">Tell Me More</a>
@@ -128,7 +123,8 @@
                         lingkungan: jQuery('#lingkungan').val()
                     },
                     success: function(result){
-                        // debugger;
+                        debugger;
+                        console.log(result)
 
                         function tambahLama(){
                             for (let i=0; i<result.success.length; i++) {                            

@@ -38,7 +38,7 @@ class ValidatorService
 
     public function validateUmat($nik, $nama, $lingkungan){   
         if ($this->umat->getByUmatNik($nama, $nik)->isNotEmpty()) {
-            if($this->umat->getByUmatLingId($nama, $lingkungan)->isEmpty()){
+            if($this->umat->getByUmatNikLingId($nama, $nik, $lingkungan)->isEmpty()){
                 return response()->json(['sukses'=>'lingkungan error']);
             } 
             $kk = $this->umat->getKk($nik);

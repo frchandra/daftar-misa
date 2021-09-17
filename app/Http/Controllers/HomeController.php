@@ -91,8 +91,6 @@ class HomeController extends Controller
 
     }
 
-    ///////todo, validasi penuh!!!
-
     public function daftarBaru(Request $request){ //query
         $nama = $request->nama;
         $namaBabtis = $request->namaBabtis;
@@ -125,6 +123,5 @@ class HomeController extends Controller
         }
 
     }
-
 
 }

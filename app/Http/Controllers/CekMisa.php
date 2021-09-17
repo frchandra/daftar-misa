@@ -28,10 +28,10 @@ class CekMisa extends Controller
         $nik = $request->nik;
         $lingkunganId = $request->lingkungan;
 
-        $umatId = $this->umat->getUmatIdByNIklId($nik, $lingkunganId);
+        $umatId = $this->umat->getUmatIdByNIklIdNama($nik, $lingkunganId, $nama);
 
         if($umatId==NULL){
-            $umatId = $this->umat->getUmatIdByNik($nik);
+            $umatId = $this->umat->getUmatIdByNikNama($nik, $nama);
             if($umatId==NULL){
                 return view('cekMisa',[
                     'response'=>'gagal'

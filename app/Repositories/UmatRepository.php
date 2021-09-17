@@ -16,8 +16,8 @@ class UmatRepository
         return Umat::where('nama', 'like', '%'. $nama .'%')->where('nik', $nik)->get();
     }
 
-    public function getByUmatLingId($nama, $lingkunganId){
-        return Umat::where('nama', 'like', '%'. $nama .'%')->where('lingkungan_id', $lingkunganId)->get();
+    public function getByUmatNikLingId($nama, $nik, $lingkunganId){
+        return Umat::where('lingkungan_id', $lingkunganId)->where('nik', $nik)->where('nama', 'like', '%'. $nama .'%')->get();
     }
 
     public function getByKk($kk){
@@ -29,12 +29,12 @@ class UmatRepository
         return Umat::select('kk')->where('nik', $nik)->first();
     }
 
-    public function getUmatIdByNik($nik){
-        return Umat::where('nik', $nik)->first();
+    public function getUmatIdByNikNama($nik, $nama){
+        return Umat::where('nik', $nik)->where('nama', $nama)->first();
     }
 
-    public function getUmatIdByNIklId($nik, $lingkunganId){
-        return Umat::where('nik', $nik)->where('lingkungan_id', $lingkunganId)->first();
+    public function getUmatIdByNIklIdNama($nik, $lingkunganId, $nama){
+        return Umat::where('nik', $nik)->where('lingkungan_id', $lingkunganId)->where('nama', $nama)->first();
     }
 
 
