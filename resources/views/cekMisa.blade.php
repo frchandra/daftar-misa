@@ -25,7 +25,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                        <form action="/misa-saya" method="POST">
+                        <form action="{{ env('APP_URL') }}/misa-saya" method="POST">
                         @csrf
                         @foreach($data as $dat)                        
                             <tr>                    

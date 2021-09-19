@@ -1,5 +1,5 @@
 <div class="pendaftaran-baru">
-    <form class="row g-3 form-pendaftaran" action="/daftar-baru" method="POST">
+    <form class="row g-3 form-pendaftaran" action="{{ env('APP_URL') }}/daftar-baru" method="POST">
         @csrf
     
         <div class="form-floating">

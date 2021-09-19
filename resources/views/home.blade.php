@@ -48,8 +48,8 @@
                 <h2 class="section-heading text-uppercase">Services</h2>
                 <h3 class="section-subheading text-muted">Lorem ipsum dolor sit amet consectetur.</h3>
             </div>
-            <div class="row text-center">
-                <form action="/misa-saya" method="GET" id="myForm" >
+            <div class="row text-center alala">
+                <form action="{{ env('APP_URL') }}/misa-saya" method="GET" id="myForm" >
                     @csrf
 
 

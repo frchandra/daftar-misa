@@ -7,7 +7,7 @@
     </div>   
 
 
-    <form id="daftar" class="form-utama" action="/daftar"  method="post">      
+    <form id="daftar" class="form-utama" action="{{ env('APP_URL') }}/daftar"  method="post">      
         @csrf           
 
 
