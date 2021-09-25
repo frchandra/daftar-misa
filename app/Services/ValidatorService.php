@@ -39,25 +39,40 @@ class ValidatorService
     public function validateUmat($nik, $nama, $lingkungan){   
         if ($this->umat->getByUmatNik($nama, $nik)->isNotEmpty()) {
             if($this->umat->getByUmatNikLingId($nama, $nik, $lingkungan)->isEmpty()){
-                return response()->json(['sukses'=>'lingkungan error']);
+                //ganti jangan return json
+                // return response()->json(['sukses'=>'lingkungan error']);
+                return ['sukses'=>'lingkungan error'];
             } 
             $kk = $this->umat->getKk($nik);
             $keluarga = $this->umat->getByKk($kk);
-            $misas = $this->getFilteredMisas($lingkungan);            
-            return response()->json([
+            $misas = $this->getFilteredMisas($lingkungan);        
+            //ganti return    
+            // return response()->json([
+            //     'content'=>view('modal.pendaftaran-lama')->render(),
+            //     'sukses'=>'berhasil',
+            //     'success'=>$keluarga,
+            //     'misa'=>$misas
+            // ]);
+            return [
                 'content'=>view('modal.pendaftaran-lama')->render(),
                 'sukses'=>'berhasil',
                 'success'=>$keluarga,
                 'misa'=>$misas
-            ]);
+            ];
         }  
 
         else{
             $misas = $this->getFilteredMisas(2);
-            return response()->json([
+            //ganti return
+            // return response()->json([
+            //     'content'=>view('modal.pendaftaran-baru')->render(),
+            //     'misa'=>$misas
+            // ]);
+            return [
                 'content'=>view('modal.pendaftaran-baru')->render(),
-                'misa'=>$misas
-            ]);
+                'misa'=>$misas,
+                'sukses'=>'not found'
+            ];
         }
     }
 

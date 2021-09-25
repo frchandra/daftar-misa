@@ -40,7 +40,23 @@ class HomeController extends Controller
         $nama = $request->nama;
         $lingkungan = $request->lingkungan;    
 
-        return $this->validator->validateUmat($nik, $nama, $lingkungan);
+        // return $this->validator->validateUmat($nik, $nama, $lingkungan);
+        //ganti return 
+        $response=$this->validator->validateUmat($nik, $nama, $lingkungan);
+        if($response['sukses']=='berhasil'){//concate
+            $response['content']=view('modal.pendaftaran-lama')->render();
+        }
+        elseif($response['sukses']=='not found'){//concate
+            $response['content']=view('modal.pendaftaran-baru')->render();
+        }
+        
+        return response()->json($response);
+
+
+
+
+
+
 
     }
 
