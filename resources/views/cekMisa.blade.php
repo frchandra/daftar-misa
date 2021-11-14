@@ -65,7 +65,7 @@
 
            
 
-            <a class="btn btn-primary btn-xl text-uppercase" href="./">Kembali</a>
+            <a class="btn btn-primary btn-xl text-uppercase" href="/">Kembali</a>
         </div>
     </header>
 

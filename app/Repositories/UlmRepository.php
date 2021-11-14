@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 
 use App\Models\UmatLingkunganMisa;
+use Illuminate\Support\Facades\DB; 
 
 class UlmRepository
 {
@@ -39,6 +40,21 @@ class UlmRepository
 
     public function delete($ulmId){
         UmatLingkunganMisa::where('umat_lingkungan_misa_id', '=', $ulmId)->delete();
+    }
+
+    public function store($umatIds, $lmId){
+        DB::beginTransaction();
+        foreach($umatIds as $umatId){
+            if($this->getForeignKey($umatId, $lmId)->isNotEmpty()){
+                $array = json_decode(json_encode($this->getUlm($umatId)), true);
+                DB::rollBack();
+                return view('response',[  //sudah terdaftar, kembalikan siapa yg terdaftar
+                    'response'=>'gagal',
+                    'data'=>$array
+                ]);  
+            }
+            // $affected = 
+        }
     }
 
 

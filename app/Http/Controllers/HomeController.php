@@ -49,15 +49,7 @@ class HomeController extends Controller
         elseif($response['sukses']=='not found'){//concate
             $response['content']=view('modal.pendaftaran-baru')->render();
         }
-        
         return response()->json($response);
-
-
-
-
-
-
-
     }
 
     public function storePendaftaran(Request $request){ //logic, query
@@ -65,41 +57,44 @@ class HomeController extends Controller
         $lingkunganMisaId = $request->input('lingkungan_misa_id');  
 
 
-
-        //$store = collect();        
-
-        //logic
+        DB::beginTransaction();
         foreach($umatIds as $umatId){            
             if($this->ulm->getForeignKey($umatId, $lingkunganMisaId)->isNotEmpty()){
-                // $store->push(['umat_id'=>$umatId, 'lingkungan_misa_id'=>$lingkunganMisaId]);
                 $array = json_decode(json_encode($this->ulm->getUlm($umatId)), true);
+                DB::rollBack();
                 return view('response',[  //sudah terdaftar, kembalikan siapa yg terdaftar
                     'response'=>'gagal',
                     'data'=>$array
                 ]);  
             }
-             
+            $this->ulm->create($umatId, $lingkunganMisaId);
+            $affected = $this->lingkunganMisa->addUmat($lingkunganMisaId);
+            if($affected<1){
+                DB::rollBack();
+                return view('response', [
+                    'response'=>'penuh'
+                ]);
+            }             
         }
+        DB::commit();
+
+        
         //transaksi query
 
-        DB::beginTransaction();
-        // DB::transaction(function () use ($umatIds, $lingkunganMisaId){
-            foreach($umatIds as $umatId){
-                $this->ulm->create($umatId, $lingkunganMisaId);
-                $affected = $this->lingkunganMisa->addUmat($lingkunganMisaId);
-                
-                
-                if($affected<1){
-                    DB::rollBack();
-                    return view('response',[
-                        'response'=>'penuh'
-                    ]);
-                    // return $affected;
-                }
+        // DB::beginTransaction();
 
-            } 
-        // });
-        DB::commit();
+        //     foreach($umatIds as $umatId){
+        //         $this->ulm->create($umatId, $lingkunganMisaId);
+        //         $affected = $this->lingkunganMisa->addUmat($lingkunganMisaId);                
+        //         if($affected<1){
+        //             DB::rollBack();
+        //             return view('response',[
+        //                 'response'=>'penuh'
+        //             ]);                  
+        //         }
+        //     } 
+
+        // DB::commit();
 
         return view('response',[
             'response'=>'sukses'
